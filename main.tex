@@ -1,8 +1,12 @@
 \documentclass[fleqn,10pt]{wlscirep}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{eucal}
+\usepackage[mathcal]{eucal}
+
 \usepackage{bm}
-\title{CTSR Autonomous Fault detection with Neural Network}
+\newcommand{\ydnote}[1]{\textcolor{red}{#1}}
+\title{  Fault detection and Diagnosis System for CSTR reactor with a hybrid knowledge-machine learning approach}
 
 \author[1,*]{Yong Dou(yd2373)}
 
@@ -34,23 +38,65 @@ nonisothermal \cite{bruns1977nonlinear}
 \subsection*{Perspective}
 There are some hidden paramereeris that are still very important 
 
-\subsection*{CSTR system}
-we assume this is a first order exothermic reaction
+\subsection*{CSTR system and heat transfer}
+
+constant density and isothermal condition. The advange including good temperature/ system, mulyiphase,  control, low and easy operating cost and continous operatation with some disadvange of low conversion rate and \ydnote{poor poor agitation}  
+
+we assume this is a first order exothermic reaction and in a well mixed (no spatial difference for the reactions) steady state the very basic equations are 
+
 \begin{equation}
-    q(C_{inlet}-C_{reaction})=C_A Vk(T)
+    Fi_{in}-Fi_{out}+V ri
 \end{equation}
 \begin{equation}
-    q \rho C_p(T_{inlet}-T_{reactor})
+    X=\frac{Fi_{in}-Fi_{out}}{Fi_{in}}
 \end{equation}
+\begin{equation}
+    X=\frac{Fi_{in}-Fi_{out}}{Fi_{in}}
+\end{equation}
+\begin{equation}
+      V=\frac{Fi_{in} X}{-rA}
+\end{equation}
+
+\ydnote{ Levenspiel Plot}
+   
+\begin{equation}
+    q(C_{inlet}-C_{reaction})=C_A Vk(T_{reactor})
+\end{equation}
+\begin{equation} 
+    q \rho \mathcal{C}(T_{inlet}-T_{reactor})+V(-\Delta H)k(T_{reactor}) C_{reactor}=(T_{outlet}-T_{inlet})Q_{cool} \mathcal{C}
+\end{equation}
+\begin{equation} 
+    k(T_reactor)=k(T_{inlet})Exp\left[\frac{E}{RT_{inlet}} \frac{T{reactor}-T_{inlet}}{T{reactor}}\left]
+\end{equation}
+There have been lots of report on the analytical or numerical analysis of the above differential equation with or witout time \cite{balakotaiah1981analysis}  dynamics bahavors\cite{schmidt1981dynamic}, nontermal \cite{hamer1981dynamic} experiment\cite{teymour1989dynamic,teymour1992dynamic} ,\cite{teymour1992dynamic2}
+complex reaction \cite{scott1983reversible,lin1981multiplicity}
+
 q is the hidden parameter
-A Technical Review\cite{TR} surveys the current of state-of-the-art capabilities in a certain area. Technical Reviews provide accessible summaries of the state-of-the-art figures of merit for techniques, devices and/or materials; comparisons of different methods with an overview of their applicability; comparisons of scientific software codes for specific applications; guidelines for data analysis of specific datasets and in particular large data releases from big instruments.
 
-Technical Reviews are approximately 5,000–-6,000 words long and typically include 8 display items and 150 references. 
-\subsection*{Expert Recommendation}
 
-Expert Recommendations are collective opinion pieces, authored by panels of specialists, that present the outcome of an analysis or discussion, and suggest a course of action, best scientific practices or methodological guidelines.
 
-Expert Recommendations are typically 1,500–-2,000 words long and may include up to 4 display items and 50 references.
+
+
+\subsection*{fault diagnose in CSTR }
+the ann\cite{hoskins1991fault} with physical explanation
+taxonoy with signs\cite{chang1990line}
+
+knowledge based system with a hierarchical Taxonomy  \cite{terpstra1992real}
+internal fault(DON'T HAVE CHILDREN) and external fault(HAVE CHILDREN ), and unknown fault. pump valve pipe(feed and coolant), CSTR TRANPOSRT , MIXER VESSEL AND 
+hybrid NERUAL NETWORK is also used in detecting the \cite{ozyurt1996hybrid}
+these papers are  limited to the tools and 
+fuzzy nertail network\cite{zhang1996process} much slower at that time
+
+BY PCA, some physics meaning will be dropped 
+
+there are step
+\begin{itemize}
+    \item learn the existenc of faulte
+    \item isoltae the type of fault
+    \item learn the physical cause
+\end{itemize}
+
+\ydnote{the output recommedication }
 
 \bibliography{sample}
 
