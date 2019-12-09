@@ -69,7 +69,7 @@ Where $\rho$ is the density of fluid and $\mathcal{C}$ is the heat capacity of f
     \textbf{Methodology Schematics } The knowledge of CSTR such as mass and heat balance, reaction kinetics are used to check and guide the machine learning process for the labeled date with different fault}
     \label{fig:1}
 \end{figure}
-To finish a fault detection job, there are 3 steps:1. Realize the existence of fault in CSTR. 2. classify what kind of fault in the system 3. diagnose the real physical/chemical cause for the fault(such as internal or external fault , where is the fault). The data we studied in this paper have already be labeled with 5 different kind of fault as well as the normal steady state. The data have 7 measurable parameters (black parameters in figure 1) which we can use to help detect the fault. However, there are some very important hidden parameters such as feed flow rate and volume of reactor  are not in our date. Because of the lack of measurement of these key parameters, it is not easy to build a full knowledgeable model. Also, because some measurable parameters have physical meaning connection, it is very costly to study pure data(may also cause spurious inferences). In this paper, a hybrid method is used as shown in the figure 2 that the knowledge of CSTR  system is used to check the reasonable of machine learning process. \textbf{First} we check the correlation of the measurable data in the normal operated condition. We use our knowledge of CSTR to understand the correlation of these data. \textbf{Second}  we use feature selection method to select the key features in the classification process and then use our knowledge of CSTR to check the reasonable of the selected feature. We apply the the support vector classification (SVC) to do the feature selection process process because (1)SVC usually has high efficiency with regerds to memory (2) the problems happens CSTR usually have very clear margin of separation between classes(such as some parameter is high or low) from our knowledge (3)the data is high dimension with enough data points (4)the measurement in chemical plant is usually accurate with less noise. \textbf{Third} with the selected data, we trained a neural network to do the classification. We add two hidden layers(each have 10 nodes with "relu" as the activation function) to train the neural network.The final layer connected to the final class is activated with "softmax" because this is a classification problem.\ydnote{we also used other methods to train the data as  a comparison with neural network It seems that all of them works very well}.
+To finish a fault detection job, there are 3 steps:1. Realize the existence of fault in CSTR. 2. classify what kind of fault in the system 3. diagnose the real physical/chemical cause for the fault(such as internal or external fault , where is the fault). The data we studied in this paper have already be labeled with 5 different kind of fault as well as the normal steady state. The data have 7 measurable parameters (black parameters in figure 1) which we can use to help detect the fault. However, there are some very important hidden parameters such as feed flow rate and volume of reactor  are not in our date. Because of the lack of measurement of these key parameters, it is not easy to build a full knowledgeable model. Also, because some measurable parameters have physical meaning connection, it is very costly to study pure data(may also cause spurious inferences). In this paper, a hybrid method is used as shown in the figure 2 that the knowledge of CSTR  system is used to check the reasonable of machine learning process. \textbf{First} we check the correlation of the measurable data in the normal operated condition. We use our knowledge of CSTR to understand the correlation of these data. \textbf{Second}  we use feature selection method to select the key features in the classification process and then use our knowledge of CSTR to check the reasonable of the selected feature. We apply the the support vector classification (SVC) to do the feature selection process process because (1)SVC usually has high efficiency with regerds to memory (2) the problems happens CSTR usually have very clear margin of separation between classes(such as some parameter is high or low) from our knowledge (3)the data is high dimension with enough data points (4)the measurement in chemical plant is usually accurate with less noise. \textbf{Third} with the selected data, we trained a neural network to do the classification. We add two hidden layers(each have 10 nodes with "relu" as the activation function) to train the neural network.The final layer connected to the final class is activated with "softmax" because this is a classification problem. Moreover, we also used other methods such as K-neartest neighbour and  decision trees to train the data as  a comparison with neural network It seems that all of them works very well.
 \textbf{Finally}, we also discuss a little how to built model-based strategy to detect the fault
 
 
@@ -79,7 +79,7 @@ To finish a fault detection job, there are 3 steps:1. Realize the existence of f
     \centering
     \includegraphics[width=13cm]{figure3.png}
     \caption{
-    \textbf{Correlation of different variables in the data labeled as normal  } The continuous feed flow with temperature $T_{inlet}$ and reactant concentration $C_{inlet}$ is pumped into reactor. To keep an isothermal reacting environment, a coolant with flux $Q_{cool}$ and temperature $T_{cool_in} $ is used to finish the heat exchange target.Black parameters are known parameters in this paper while some hidden parameters  are shown in blue For the simplicity, no sensors/valves are plotted here.}
+    \textbf{Correlation of different variables in the data labeled as normal  } Kernel density estimation (KDE) is used to show the distribution of each variables in the diagonal. The lower section of plot visualize the  relations between each pair of variables while the upper section shows the  value of correlation. Large absolute value of  correlation indicates strong correlation and   small absolute value of  correlation indicates weak correlation.}
     \label{fig:1}
 \end{figure}
 \begin{itemize}
@@ -95,29 +95,42 @@ Now based on our knowledge of CSTR and the correlation from data, we have a bett
     \centering
     \includegraphics[width=8.5cm]{figure4.pdf}
     \caption{
-    \textbf{Correlation of different variables in the data labeled as normal  } The continuous feed flow with temperature $T_{inlet}$ and reactant concentration $C_{inlet}$ is pumped into reactor. To keep an isothermal reacting environment, a coolant with flux $Q_{cool}$ and temperature $T_{cool_in} $ is used to finish the heat exchange target.Black parameters are known parameters in this paper while some hidden parameters  are shown in blue For the simplicity, no sensors/valves are plotted here.}
+    \textbf{Feature selection} The ranking of importance of the feature is(from more important to less important): $C_{inlet}, T_{inlet}, Q_{cool}, C_{reactor}, T_{cool\_in}, heat, T_{cool_out}, T_{reactor}$. The cross-validated test score with different number and combination of  features in the system. High test score corresponds to better training results. }
     \label{fig:1}
 \end{figure}
-
+ As discussed in the methodology part, we use statistical method to do the feature selection or dimensionality reduction on my data sample. Recursive feature elimination(RFE) can also help us to determine the number of necessary  features to do the training process  
+ The ranking of importance of each feature and the RFE plot is shown in the figure 4. Fro, the figure 4, we can see that after we select the two highest ranking features($C_{inlet}, T_{inlet}$), the score is already high enough very close to 1. Adding more features into model don't give better result with a flat platform on score instead. More importantly, the ranking of the importance of features is agree with our knowledge based model  that independent variables($C_{inlet}, T_{inlet},C_{reactor} $) have high score. $C_{inlet}, T_{inlet}$ are the inlet of  system to bring heat and mass into a steady state CSTR reactor, which are physically reasonable to have big possibilities of fault and introducing chaos. The relative low score of independent variables $T_{cool\_in}$ means the fault doesn't come with coolant temperature, which is also physically reasonable due to the less importance of this feature in the CSTR system.Based on the combination of  pure data analysis  and CSTR knowledge, the feature selection has the results of using ($C_{inlet}, T_{inlet}$) as key variables to train the data.
 
 \textbf{Training and validation}
-
 \begin{figure}[h]
     \centering
     \includegraphics[width=8.5cm]{figure5.pdf}
     \caption{
-    \textbf{Correlation of different variables in the data labeled as normal  } The continuous feed flow with temperature $T_{inlet}$ and reactant concentration $C_{inlet}$ is pumped into reactor. To keep an isothermal reacting environment, a coolant with flux $Q_{cool}$ and temperature $T_{cool_in} $ is used to finish the heat exchange target.Black parameters are known parameters in this paper while some hidden parameters  are shown in blue For the simplicity, no sensors/valves are plotted here.}
+    \textbf{Training results of neural network} The back ground is the phase plot(or predicted classification results) gained from the nerual network. The points plotted are real labeled. The test validation result is 0.9938.  Red : normal; Yellow: fault 1; Green: fault 2; Light blue: fault 3;  Blue: fault 4; Pink:fault 5 }
     \label{fig:1}
 \end{figure}
-
+As introduced in the methodology part,
 \begin{figure}[h]
     \centering
     \includegraphics[width=12cm]{figure6.pdf}
     \caption{
-    \textbf{Correlation of different variables in the data labeled as normal  } The continuous feed flow with temperature $T_{inlet}$ and reactant concentration $C_{inlet}$ is pumped into reactor. To keep an isothermal reacting environment, a coolant with flux $Q_{cool}$ and temperature $T_{cool_in} $ is used to finish the heat exchange target.Black parameters are known parameters in this paper while some hidden parameters  are shown in blue For the simplicity, no sensors/valves are plotted here.}
+    \textbf{Training results of other classification method} The methods of classification are labeled at the title in each subplot. The validation scores are shown at the bottom right at each subplot.  Red : normal; Yellow: fault 1; Green: fault 2; Light blue: fault 3;  Blue: fault 4; Pink:fault 5 }
     \label{fig:1}
 \end{figure}
+two hidden layers are used in the neural network training. Stochastic gradient descent is used to optimize the weights in each node and layer.We separated data as training data and test data in the ratio of 80/20.  As a classification problem, categorical$\_$crossentropy is used as the loss function. The training process is operated with 20 epochs and a batch size of 64. The training  result is shown in the figure 5 with an validation accuracy about \textbf{0.9938}. As we can see from the figure 5, the  training result is very good that classify the date into the right fault number. As a comparison, we also applied 9 different other method(as shown in the figure 6). Most of classification methods works very well with an validation accuracy close to 1. Adaboots and supporying vector machine with RBF kernel have unsatisfied results, which could be improved by tuning the parameter in the model carefully(which is not the focus of this paper). Generally, the training process works very well with most  methods and can give very good prediction with a very high accuracy and less over-fitting.
+
+
 \textbf{Diagnose and Recommendation }
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=12cm]{figure7.png}
+    \caption{
+    \textbf{Diagnose  of the system} The table describes the the direct cause( from the machine learning)of the fault and the system behaviors along the fault( from CSTR knowledge.  }
+    \label{fig:1}
+\end{figure}
+
+Based on the training results, we summarize the fault type and their possible cause in the figure 7
+
  
 \subsection*{Conclusion}
 
