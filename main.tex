@@ -1,4 +1,4 @@
-\documentclass[fleqn,10pt]{wlscirep}
+\documentclass[fleqn,11pt]{wlscirep}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{eucal}
@@ -13,11 +13,12 @@
 \affil[1]{Columbia University, Department of Chemical Engineering ,New York, NY}
 
 \affil[*]{e-mail:yd2373@columbia.edu}
-
-
 \begin{abstract}
-
+ Continuous stirred-tank reactor(CSTR) is a widely used continous oparation reactor model in chemical or pharmaceutical engineering.(The schematic of a typical CSTR is shown in figure 1) CSTR assumes an almost perfect mixed reactor with stable flow input and output. CSTR is feasible with multi-phasae reaction with good temperature control, economic cost and unsophisticated system.\cite{fogler2010essentials}  However CSTR sometimes may face the problems to cause fault in the unit operation such as low conversion rate and poor agitation in reactor. In the real industry, it is very important to detect fault in CSTR for safety and efficiency. The aim of this paper is to introduce an AI approach to detect the fault in CSTR.
+The first part of the paper is to introduce the basic mechanism of CSTR and review some similar approach of fault detection in CSTR. The second is to methodology and the third is results and discussion. 
 \end{abstract}
+
+
 \begin{document}
 
 \flushbottom
@@ -27,47 +28,36 @@
 
 \noindent \textbf{Key points:} Neural Network, Knowledge based system, CSTR, Fault detection}
 
-
-\section*{Article types in Nature Reviews Physics}
 \subsection*{Introduction}
-nonisothermal \cite{bruns1977nonlinear}
-
-
-
-
-\subsection*{Perspective}
-There are some hidden paramereeris that are still very important 
-
-\subsection*{CSTR system and heat transfer}
-
-constant density and isothermal condition. The advange including good temperature/ system, mulyiphase,  control, low and easy operating cost and continous operatation with some disadvange of low conversion rate and \ydnote{poor poor agitation}  
-
-we assume this is a first order exothermic reaction and in a well mixed (no spatial difference for the reactions) steady state the very basic equations are 
-
+\textbf{Transport process and heat exchange in CSTR:} As shown in the figure 1, CSTR is a dynamics transport process with mass and heat input as well as internal consumption and production via reaction. A normal functional CSTR reactor is usually in a steady state so that the flux in/out of the reactor are the same to keep a constant reaction volume inside the reactor. The mass balance can be represented by(with the assumption of constant density):
 \begin{equation}
-    Fi_{in}-Fi_{out}+V ri
+    v_{inlet}(C_{inlet}-C_{reactor})=V R\left\{k(T_{reactor}),C_{reactor}\right\}
 \end{equation}
-\begin{equation}
-    X=\frac{Fi_{in}-Fi_{out}}{Fi_{in}}
-\end{equation}
-\begin{equation}
-    X=\frac{Fi_{in}-Fi_{out}}{Fi_{in}}
-\end{equation}
-\begin{equation}
-      V=\frac{Fi_{in} X}{-rA}
+Where $V_{inlet}$ is the flow rate; $C_{inlet},C_{reactor}$ are the concentration of reactant in the feed flux and reactor separately; $V$ is the volume of reactor;R is the reaction rate as a function of temperature in reactor $T_{reactor}$(reaction constant$k(T)$ depends on temperature) and $C_{reactor}$.  The reaction constant can be expressed as with arrhenius equation 
+\begin{equation} 
+    k(T_reactor)=k(T_{inlet})Exp\left[\frac{E}{RT_{inlet}} \frac{T_{reactor}-T_{inlet}}{T_{reactor}}\right]
 \end{equation}
 
-\ydnote{ Levenspiel Plot}
-   
+
+If the reaction is a first order reaction, the right part of equation(1) can be simplified as $Vk(T_{reactor})C_{reactor}$. In the steady state,  the output concentration and temperature of CSTR is same the concentration and temperature inside the reactor. Thus, the output of a CSTR is  a function of residence time and rate of reaction. Damköhler number is used to describe this kind of reactions defined as
 \begin{equation}
-    q(C_{inlet}-C_{reaction})=C_A Vk(T_{reactor})
+    Da=\frac{reaction rate}{flow}
 \end{equation}
+ Levenspiel Plot which represent the relationship between  Damköhler number and conversion rate  is often used to help design the vlume of reactor\cite{fogler2010essentials}.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=8.5cm]{CSTR.pdf}
+    \caption{
+    \textbf{Schematic of CSTR } The continuous feed flow with temperature $T_{inlet}$ and reactant concentration $C_{inlet}$ is pumped into reactor. To keep an isothermal reacting environment, a coolant with flux $Q_{cool}$ and temperature $T_{cool_in} $ is used to finish the heat exchange target.Black parameters are known parameters in this paper while some hidden parameters  are shown in blue For the simplicity, no sensors/valves are plotted here.}
+    \label{fig:1}
+\end{figure}
+
+While some CSTR is operated is in non-isothermal state\cite{bruns1977nonlinear}, CSTR is ,usually operated in a isotermal state\cite{balakotaiah1981analysis}. If the reaction is exothermic, to keep a constant temperature inside reactor, a coolant(as shown in the figure 1) is required to finish heat transfer target.
+
 \begin{equation} 
     q \rho \mathcal{C}(T_{inlet}-T_{reactor})+V(-\Delta H)k(T_{reactor}) C_{reactor}=(T_{outlet}-T_{inlet})Q_{cool} \mathcal{C}
 \end{equation}
-\begin{equation} 
-    k(T_reactor)=k(T_{inlet})Exp\left[\frac{E}{RT_{inlet}} \frac{T{reactor}-T_{inlet}}{T{reactor}}\left]
-\end{equation}
+
 There have been lots of report on the analytical or numerical analysis of the above differential equation with or witout time \cite{balakotaiah1981analysis}  dynamics bahavors\cite{schmidt1981dynamic}, nontermal \cite{hamer1981dynamic} experiment\cite{teymour1989dynamic,teymour1992dynamic} ,\cite{teymour1992dynamic2}
 complex reaction \cite{scott1983reversible,lin1981multiplicity}
 
@@ -75,9 +65,12 @@ q is the hidden parameter
 
 
 
-
+\subsection*{Methodology}
+\subsection*{Results and Discussion.}
 
 \subsection*{fault diagnose in CSTR }
+
+There are some hidden paramereeris that are still very important 
 the ann\cite{hoskins1991fault} with physical explanation
 taxonoy with signs\cite{chang1990line}
 
@@ -121,12 +114,7 @@ If your article requires supplementary information, please include these files f
 \section*{Box 1 (Optional)}
 This is a Box, which can contain a figure, and which should have no more than 300 words of text.
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\linewidth]{fig}
-\caption{The figure caption should start with a title explaining the figure. Figures should be self-consistent so please redefine all acronyms and define all symbols. Example: GHZ, Greenberger–Horne–Zeilinger, OAM, orbital angular momentum. Please provide credit lines for panels reproduced from the literature. Example: Panels a and b are reproduced from Ref. \cite{TR}.}
-\label{fig}
-\end{figure}
+
 
 \begin{table}[ht]
 \centering
