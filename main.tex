@@ -91,10 +91,32 @@ To finish a fault detection job, there are 3 steps:1. Realize the existence of f
 Now based on our knowledge of CSTR and the correlation from data, we have a better view of the relations among these data. Fault usually happens from the independent variables (such as$T_{cool\_in} ,T_{inlet}, C_{inlet}$, we use these as our possible candidate for importance feature for training). The problems in dependent variables can usually traced back to these independent variable . 
 
 \textbf{Feature selection}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=8.5cm]{figure4.pdf}
+    \caption{
+    \textbf{Correlation of different variables in the data labeled as normal  } The continuous feed flow with temperature $T_{inlet}$ and reactant concentration $C_{inlet}$ is pumped into reactor. To keep an isothermal reacting environment, a coolant with flux $Q_{cool}$ and temperature $T_{cool_in} $ is used to finish the heat exchange target.Black parameters are known parameters in this paper while some hidden parameters  are shown in blue For the simplicity, no sensors/valves are plotted here.}
+    \label{fig:1}
+\end{figure}
 
 
 \textbf{Training and validation}
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=8.5cm]{figure5.pdf}
+    \caption{
+    \textbf{Correlation of different variables in the data labeled as normal  } The continuous feed flow with temperature $T_{inlet}$ and reactant concentration $C_{inlet}$ is pumped into reactor. To keep an isothermal reacting environment, a coolant with flux $Q_{cool}$ and temperature $T_{cool_in} $ is used to finish the heat exchange target.Black parameters are known parameters in this paper while some hidden parameters  are shown in blue For the simplicity, no sensors/valves are plotted here.}
+    \label{fig:1}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=12cm]{figure6.pdf}
+    \caption{
+    \textbf{Correlation of different variables in the data labeled as normal  } The continuous feed flow with temperature $T_{inlet}$ and reactant concentration $C_{inlet}$ is pumped into reactor. To keep an isothermal reacting environment, a coolant with flux $Q_{cool}$ and temperature $T_{cool_in} $ is used to finish the heat exchange target.Black parameters are known parameters in this paper while some hidden parameters  are shown in blue For the simplicity, no sensors/valves are plotted here.}
+    \label{fig:1}
+\end{figure}
 \textbf{Diagnose and Recommendation }
  
 \subsection*{Conclusion}
