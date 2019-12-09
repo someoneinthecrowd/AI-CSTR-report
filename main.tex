@@ -35,7 +35,7 @@ The first part of the paper is to introduce the basic mechanism of CSTR and revi
 \end{equation}
 Where $V_{inlet}$ is the flow rate; $C_{inlet},C_{reactor}$ are the concentration of reactant in the feed flux and reactor separately; $V$ is the volume of reactor;R is the reaction rate as a function of temperature in reactor $T_{reactor}$(reaction constant$k(T)$ depends on temperature) and $C_{reactor}$.  The reaction constant can be expressed as with arrhenius equation 
 \begin{equation} 
-    k(T_reactor)=k(T_{inlet})Exp\left[\frac{E}{RT_{inlet}} \frac{T_{reactor}-T_{inlet}}{T_{reactor}}\right]
+    k(T_{reactor})=k(T_{inlet})Exp\left[\frac{E}{RT_{inlet}} \frac{T_{reactor}-T_{inlet}}{T_{reactor}}\right]
 \end{equation}
 
 
@@ -43,7 +43,7 @@ If the reaction is a first order reaction, the right part of equation(1) can be 
 \begin{equation}
     Da=\frac{reaction rate}{flow}
 \end{equation}
- Levenspiel Plot which represent the relationship between  Damköhler number and conversion rate  is often used to help design the vlume of reactor\cite{fogler2010essentials}.
+ Levenspiel Plot which represent the relationship between  Damköhler number and conversion rate  is often used to help design the volume of reactor\cite{fogler2010essentials}.
 \begin{figure}[h]
     \centering
     \includegraphics[width=8.5cm]{CSTR.pdf}
@@ -52,92 +52,59 @@ If the reaction is a first order reaction, the right part of equation(1) can be 
     \label{fig:1}
 \end{figure}
 
-While some CSTR is operated is in non-isothermal state\cite{bruns1977nonlinear}, CSTR is ,usually operated in a isotermal state\cite{balakotaiah1981analysis}. If the reaction is exothermic, to keep a constant temperature inside reactor, a coolant(as shown in the figure 1) is required to finish heat transfer target.
+While some CSTR is operated is in non-isothermal state\cite{bruns1977nonlinear}, CSTR is usually operated in a isotermal state\cite{balakotaiah1981analysis}. If the reaction is exothermic, to keep a constant temperature inside reactor, a coolant(as shown in the figure 1) is required to finish heat transfer target. The heat balance can be expressed as:
 
 \begin{equation} 
-    q \rho \mathcal{C}(T_{inlet}-T_{reactor})+V(-\Delta H)k(T_{reactor}) C_{reactor}=(T_{outlet}-T_{inlet})Q_{cool} \mathcal{C}
+    v \rho \mathcal{C}(T_{inlet}-T_{reactor})+V(-\Delta H)R\left\{k(T_{reactor}),C_{reactor}\right\}=(T_{cool\_out}-T_{cool\_in})Q_{cool} \mathcal{C}
 \end{equation}
+Where $\rho$ is the density of fluid and $\mathcal{C}$ is the heat capacity of fluid; $\delta H$ is the enthalpy of the reaction;$Q_{cool}$ is the flowrate of coolant and $T_{cool\_out}, T_{cool\_in}$ are the inlet and outlet temperature of coolant. In addition to the simple CSTR model above, there has been lots of research on more complex situation such as non-steady state CSTR with dynamics behaviors \cite{balakotaiah1981analysis,schmidt1981dynamic} ,non-isothermal CSTR \cite{hamer1981dynamic} and complex reaction \cite{scott1983reversible,lin1981multiplicity}. I would like to refer audience Professor W. Harmon Ray's elegant series papers  on CSTR \cite{teymour1989dynamic,teymour1992dynamic,teymour1992dynamic2}  to learn more about CSTR system. 
 
-There have been lots of report on the analytical or numerical analysis of the above differential equation with or witout time \cite{balakotaiah1981analysis}  dynamics bahavors\cite{schmidt1981dynamic}, nontermal \cite{hamer1981dynamic} experiment\cite{teymour1989dynamic,teymour1992dynamic} ,\cite{teymour1992dynamic2}
-complex reaction \cite{scott1983reversible,lin1981multiplicity}
-
-q is the hidden parameter
-
-
+\textbf{CSTR fault detection :} In the real industrial operation, the CSTR is very different from the simple model presented above with the existence of supporting part such as valves, sensors , pipes and feedback system which add lots of measure able/hidden parameters. It is very important to detect the fault and diagnose the reason quickly and efficiently for safety and productivity. However, simply using several differential equations is not enough to describe the complex system. The research on fault detection for CSTR has a very long history in chemical engineering field, which can be dated back 1980s. There are mainly three ways to do the fault detection in CSTR: expert system(knowledge based)such as building hierarchical taxonomy relations with physical/chemical understanding  of CSTR system\cite{chang1990line,terpstra1992real}; machine learning(data driven) such a artificial neural network\cite{hoskins1991fault}; and hybrid model which combined previous two method together\cite{ozyurt1996hybrid,zhang1996process}.  These papers back to more than 10 years ago are limited to the computation ability and the amount of clear labeled date. With the advent of hardware and computation tools recently, the machine learning approach can be more efficient by incorporating some basic knowledge on CSTR system. And I am going to show this approach in the following content.
 
 \subsection*{Methodology}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=8.5cm]{method.pdf}
+    \caption{
+    \textbf{Methodology Schematics } The knowledge of CSTR such as mass and heat balance, reaction kinetics are used to check and guide the machine learning process for the labeled date with different fault}
+    \label{fig:1}
+\end{figure}
+To finish a fault detection job, there are 3 steps:1. Realize the existence of fault in CSTR. 2. classify what kind of fault in the system 3. diagnose the real physical/chemical cause for the fault(such as internal or external fault , where is the fault). The data we studied in this paper have already be labeled with 5 different kind of fault as well as the normal steady state. The data have 7 measurable parameters (black parameters in figure 1) which we can use to help detect the fault. However, there are some very important hidden parameters such as feed flow rate and volume of reactor  are not in our date. Because of the lack of measurement of these key parameters, it is not easy to build a full knowledgeable model. Also, because some measurable parameters have physical meaning connection, it is very costly to study pure data(may also cause spurious inferences). In this paper, a hybrid method is used as shown in the figure 2 that the knowledge of CSTR  system is used to check the reasonable of machine learning process. \textbf{First} we check the correlation of the measurable data in the normal operated condition. We use our knowledge of CSTR to understand the correlation of these data. \textbf{Second}  we use feature selection method to select the key features in the classification process and then use our knowledge of CSTR to check the reasonable of the selected feature. We apply the the support vector classification (SVC) to do the feature selection process process because (1)SVC usually has high efficiency with regerds to memory (2) the problems happens CSTR usually have very clear margin of separation between classes(such as some parameter is high or low) from our knowledge (3)the data is high dimension with enough data points (4)the measurement in chemical plant is usually accurate with less noise. \textbf{Third} with the selected data, we trained a neural network to do the classification. We add two hidden layers(each have 10 nodes with "relu" as the activation function) to train the neural network.The final layer connected to the final class is activated with "softmax" because this is a classification problem.\ydnote{we also used other methods to train the data as  a comparison with neural network It seems that all of them works very well}.
+\textbf{Finally}, we also discuss a little how to built model-based strategy to detect the fault
+
+
 \subsection*{Results and Discussion.}
-
-\subsection*{fault diagnose in CSTR }
-
-There are some hidden paramereeris that are still very important 
-the ann\cite{hoskins1991fault} with physical explanation
-taxonoy with signs\cite{chang1990line}
-
-knowledge based system with a hierarchical Taxonomy  \cite{terpstra1992real}
-internal fault(DON'T HAVE CHILDREN) and external fault(HAVE CHILDREN ), and unknown fault. pump valve pipe(feed and coolant), CSTR TRANPOSRT , MIXER VESSEL AND 
-hybrid NERUAL NETWORK is also used in detecting the \cite{ozyurt1996hybrid}
-these papers are  limited to the tools and 
-fuzzy nertail network\cite{zhang1996process} much slower at that time
-
-BY PCA, some physics meaning will be dropped 
-
-there are step
+\textbf{correlation study of measurable variables in normal data:}According to the equation(4) we can use the data $ Q_{cool}, T_{cool\_in},T_{cool\_out}$ to calculate the heat exchange amount as $heat =Q_{cool}\times( T_{cool\_out}-T_{cool\_out})$, as the eighth feature in the  data. The correlation plot of normal state is shown in the figure 3 as a  pairwise relationship plot for all the eighth variables with r value is the correlation(positive mean means the slop is positive ). It is very clear there several variables are strong correlated while some  variables seems have no relations.We are going to discuss this correlations in the following content.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=13cm]{figure3.png}
+    \caption{
+    \textbf{Correlation of different variables in the data labeled as normal  } The continuous feed flow with temperature $T_{inlet}$ and reactant concentration $C_{inlet}$ is pumped into reactor. To keep an isothermal reacting environment, a coolant with flux $Q_{cool}$ and temperature $T_{cool_in} $ is used to finish the heat exchange target.Black parameters are known parameters in this paper while some hidden parameters  are shown in blue For the simplicity, no sensors/valves are plotted here.}
+    \label{fig:1}
+\end{figure}
 \begin{itemize}
-    \item learn the existenc of faulte
-    \item isoltae the type of fault
-    \item learn the physical cause
+     \item {$C_{reactor} ,T_{cool\_out}, r=-0.96$,$C_{reactor} ,T_{reactor},r=-0.9$ ,  $T_{reactor} T_{cool\_out},r=0.86$. These three parameters have the highest correlation. From the mechanism of CSTR we know that, the low concentration in reactor means a high reaction rate happening, which will generate more heat and increase the temperature$T_{reactor}$ in reactor and will lift the output temperature of coolant output$T_{cool\_out}$. We can have the posssible relation that  $C_{reactor} \rightarrow T_{reactor} \rightarrow T_{cool\_out} $ } 
+      \item {$C_{inlet} ,Q_{cool}, r=0.87$,Increase the feed concentration will increase the temperature of reactor which needs more coolant flux. This high correlation indicate there is some feedback design between the $C_{inlet}$  and $ Q_{cool}$. Also $Q_{cool}$ has  no obvious relations with concentration/temperature in reactor or feed temparature, so we can assume there is not feedback directly between coolant flux and other part in the CSTR system. Now we have another relation that
+      $C_{inlet} \rightarrow Q_{cool}$ } 
+        \item {$T_{cool\_in} ,T_{inlet}$, These two variables have very small correlations to any variables, which indicate these two are independent variables. This assumption makes lots of sense because these two variables are the outside input into CSTR system(if there is no feedback system connected to them) $T_{cool\_in} ,T_{inlet}$ are both not influenced by the change in system } 
 \end{itemize}
+Now based on our knowledge of CSTR and the correlation from data, we have a better view of the relations among these data. Fault usually happens from the independent variables (such as$T_{cool\_in} ,T_{inlet}, C_{inlet}$, we use these as our possible candidate for importance feature for training). The problems in dependent variables can usually traced back to these independent variable . 
 
-\ydnote{the output recommedication }
+\textbf{Feature selection}
+
+
+\textbf{Training and validation}
+
+\textbf{Diagnose and Recommendation }
+ 
+\subsection*{Conclusion}
 
 \bibliography{sample}
 
-\noindent \textbf{For Reviews only, highlighted references (optional)} Please select 5–-10 key references and provide a single sentence for each, highlighting the significance of the work.
-
-\section*{Acknowledgements (optional)}
-The authors thank Erwin the Cat for useful discussions. Please edit as necessary.
-
-\section*{Author contributions}
-The authors contributed equally to all aspects of the article. Please edit as necessary. Note that the information must be the same as in our manuscript tracking system.
-
-\section*{Competing interests}
-The authors declare no competing interests. Please edit as necessary. Note that the information must be the same as in our manuscript tracking system.
-
-\section*{Publisher’s note}
-Springer Nature remains neutral with regard to jurisdictional claims in published maps and institutional affiliations.
-
-\section*{Supplementary information (optional)}
-If your article requires supplementary information, please include these files for peer-review. Please note that supplementary information will not be edited.
-
-\newpage
-\section*{Box 1 (Optional)}
-This is a Box, which can contain a figure, and which should have no more than 300 words of text.
-
-
-
-\begin{table}[ht]
-\centering
-\begin{tabular}{|l|l|l|}
-\hline
-Particle & Mass & Charge \\
-\hline
-Electron & $9.10938356(11)\times10^{-31}$ kg & $-1e$ \\
-\hline
-Proton & $1.672621898(21)\times10^{-27}$ kg & $+1e$ \\
-\hline
-Neutron & $1.674927471(21)\times10^{-27}$ kg & $0$ \\
-\hline
-\end{tabular}
-\caption{\label{tab}Tables have titles but no captions are allowed. However, all symbols and acronyms used in a table should be defined in a footnote. Example: Here $e$ is the elementary charge.}
-\end{table}
-
-\section*{Glossary terms (optional)}
-It is possible  to include glossary terms to define some technical terms. For each glossary term, please provide a short (maximum 30 word) definition. Please list these in order of first appearance in the text. In the published version, they will appear in the margins of the document. 
-
-Example: \\
-\textbf{Lam\'e parameters:} A possible pair of parameters that characterize the Cauchy elasticity tensor in an isotropic homogeneous medium. The second Lam\'e parameter is identical to the shear modulus.
-
-
 
 \end{document}
+
+
+
+
+BY PCA, some physics meaning will be dropped 
